@@ -1,0 +1,8 @@
+streamlit
+numpy
+scipy
+matplotlib
+pydub
+static-ffmpeg
+audioop-lts
+pandas
