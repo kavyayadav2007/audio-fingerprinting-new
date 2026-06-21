@@ -17,3 +17,6 @@ scratch/
 *.m4a
 *.ogg
 *.aac
+fingerprints.db
+*.zip
+fingerprints.db
