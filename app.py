@@ -21,7 +21,11 @@ st.set_page_config(
 )
 
 # Paths
-DB_DIR = r"C:\Users\Kavya\Documents\ee200\audio_fingerprinting\audio-fingerprint-identifying-python\db"
+# Automatically find the folder where app.py is located
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# Build the path relative to the app's location
+DB_DIR = os.path.join(BASE_DIR, "audio-fingerprint-identifying-python", "db")
 DB_PATH = os.path.join(DB_DIR, "fingerprints.db")
 
 # Initialize database
