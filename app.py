@@ -34,6 +34,7 @@ db = core.Database(DB_PATH)
 # Auto Indexing
 
 
+@st.cache_resource
 def auto_index_if_empty():
     if not db.get_all_songs():
         if os.path.exists(DB_DIR):
@@ -59,9 +60,12 @@ def auto_index_if_empty():
                             fingerprints = [(song_id, h, offset)
                                             for h, offset in hashes]
                             db.store_fingerprints(fingerprints)
+    return True
 
 
+# Trigger the caching function
 auto_index_if_empty()
+# -----------------------------
 
 
 # Styling CSS for rich premium look
