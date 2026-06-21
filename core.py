@@ -5,10 +5,10 @@ import numpy as np
 import matplotlib.mlab as mlab
 from scipy.ndimage import maximum_filter, generate_binary_structure, iterate_structure, binary_erosion
 from pydub import AudioSegment
-import static_ffmpeg
+#import static_ffmpeg
 
 # Initialize ffmpeg binaries on startup
-static_ffmpeg.add_paths()
+# static_ffmpeg.add_paths()
 
 # Algorithm Parameters (from the repository)
 DEFAULT_FS = 44100
