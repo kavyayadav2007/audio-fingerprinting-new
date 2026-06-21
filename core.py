@@ -5,6 +5,7 @@ import numpy as np
 import matplotlib.mlab as mlab
 from scipy.ndimage import maximum_filter, generate_binary_structure, iterate_structure, binary_erosion
 from pydub import AudioSegment
+
 #import static_ffmpeg
 
 # Initialize ffmpeg binaries on startup
@@ -144,8 +145,15 @@ class Database:
                 print("Database extraction complete.")
 
     def get_connection(self):
+        # 1. Get the folder path from the full database path
+        db_dir = os.path.dirname(self.db_path)
+        
+        # 2. If there is a folder path, create it (and ignore if it already exists)
+        if db_dir:
+            os.makedirs(db_dir, exist_ok=True)
+            
+        # 3. Now it is safe to connect!
         conn = sqlite3.connect(self.db_path)
-        conn.text_factory = str
         return conn
 
     def init_db(self):
