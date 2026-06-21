@@ -28,8 +28,15 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_DIR = os.path.join(BASE_DIR, "audio-fingerprint-identifying-python", "db")
 DB_PATH = os.path.join(DB_DIR, "fingerprints.db")
 
-# Initialize database
-db = core.Database(DB_PATH)
+# Initialize database securely
+
+
+@st.cache_resource
+def get_database():
+    return core.Database(DB_PATH)
+
+
+db = get_database()
 
 # Auto Indexing
 
