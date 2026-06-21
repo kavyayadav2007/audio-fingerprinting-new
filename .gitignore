@@ -8,7 +8,7 @@ scratch/
 *.db-journal
 
 # Ignore Database files
-
+*.db
 
 # Ignore Audio files
 *.mp3
