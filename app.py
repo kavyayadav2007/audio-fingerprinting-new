@@ -33,39 +33,43 @@ db = core.Database(DB_PATH)
 
 # Auto Indexing
 
+# --- AUTO-INDEXING FEATURE ---
+# Automatically resumes indexing if there are MP3s in the folder that aren't in the DB yet
+
 
 @st.cache_resource
-def auto_index_if_empty():
-    if not db.get_all_songs():
-        if os.path.exists(DB_DIR):
-            mp3_files = [f for f in os.listdir(DB_DIR) if f.endswith(".mp3")]
-            if mp3_files:
-                with st.spinner("First-time setup: Building database index... This may take a minute."):
-                    for filename in mp3_files:
-                        filepath = os.path.join(DB_DIR, filename)
-                        filehash = core.get_file_hash(filepath)
-                        existing_song = db.get_song_by_filehash(filehash)
+def auto_index_missing_songs():
+    if os.path.exists(DB_DIR):
+        mp3_files = [f for f in os.listdir(DB_DIR) if f.endswith(".mp3")]
+        existing_songs = db.get_all_songs()
 
-                        if not existing_song:
-                            audio = core.load_audio(filepath)
-                            song_id = db.add_song(filename, audio['file_hash'])
+        # If the DB has fewer songs than the folder, we have missing files to index!
+        if len(existing_songs) < len(mp3_files):
+            with st.spinner(f"Resuming index... ({len(existing_songs)}/{len(mp3_files)} completed). This may take a minute."):
+                for filename in mp3_files:
+                    filepath = os.path.join(DB_DIR, filename)
+                    filehash = core.get_file_hash(filepath)
 
-                            hashes = set()
-                            for channel in audio['channels']:
-                                arr2D = core.get_spectrogram(
-                                    channel, Fs=audio['Fs'])
-                                peaks = core.get_2D_peaks(arr2D)
-                                hashes |= set(core.generate_hashes(peaks))
+                    # Check if this specific song is already in the database
+                    if not db.get_song_by_filehash(filehash):
+                        audio = core.load_audio(filepath)
+                        song_id = db.add_song(filename, audio['file_hash'])
 
-                            fingerprints = [(song_id, h, offset)
-                                            for h, offset in hashes]
-                            db.store_fingerprints(fingerprints)
+                        hashes = set()
+                        for channel in audio['channels']:
+                            arr2D = core.get_spectrogram(
+                                channel, Fs=audio['Fs'])
+                            peaks = core.get_2D_peaks(arr2D)
+                            hashes |= set(core.generate_hashes(peaks))
+
+                        fingerprints = [(song_id, h, offset)
+                                        for h, offset in hashes]
+                        db.store_fingerprints(fingerprints)
     return True
 
 
 # Trigger the caching function
-auto_index_if_empty()
-# -----------------------------
+auto_index_missing_songs()
 
 
 # Styling CSS for rich premium look
